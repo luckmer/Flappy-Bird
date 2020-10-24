@@ -1,10 +1,17 @@
 document.addEventListener("DOMContentLoaded", () =>{
     const Game = document.querySelector(".game")
     const character = document.querySelector(".character");
+    const start = document.querySelector(".Start")
     let characterLeft = 100;
     let gravity = 3;
     let ChTimer;
     let ChLeft = 10;
+
+    function StartGame(){
+        generateWall()
+        FallDown()
+        start.classList.add("Off")
+    }
 
     function FallDown(){
         ChTimer = setInterval(function (){
@@ -12,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () =>{
             character.style.top = characterLeft + "px"
             character.style.left = ChLeft + "px"
             if (characterLeft > 355){
-                characterLeft -= gravity;
+                setEndGame()
             }
         }, 20)
     }
@@ -39,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () =>{
         let timerId = setInterval(moveBlock, 20)
         setTimeout(generateWall, 3000)
     }
-
 
     function upperPart(random, Game){
         const UpWall = document.createElement("div");
@@ -69,13 +75,15 @@ document.addEventListener("DOMContentLoaded", () =>{
             ChLeft === 10 &&
             (characterLeft > random - 20)){
             setEndGame(timerId, ChTimer);
+            
         }
-
     }
 
     function setEndGame(timerId, ChTimer){
         clearInterval(timerId);
-        clearInterval(ChTimer);       
+        clearInterval(ChTimer);
+        location.reload(true);
+        alert("game over ")
     }
 
     const jump = () => characterLeft < 910 ? characterLeft -= 50 : characterLeft -= 2;
@@ -86,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () =>{
         }
     }
     
-    generateWall()
-    FallDown()
+
+    start.addEventListener("click", StartGame)
     document.addEventListener("keyup",Joystick)
 })

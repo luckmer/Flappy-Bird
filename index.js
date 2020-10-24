@@ -1,64 +1,105 @@
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () =>{
+    const Game = document.querySelector(".game")
     const character = document.querySelector(".character");
-    const start = document.querySelector(".wall_control");
-    let controlBlock = 910;
-    let timerId;
+    let characterLeft = 100;
     let gravity = 3;
-
+    let ChTimer;
+    let ChLeft = 10;
     function FallDown()
     {
-        timerId = setInterval(function ()
+        ChTimer = setInterval(function ()
         {
-            controlBlock -= gravity;
-            character.style.bottom = controlBlock + "px"
-            controlBlock < 582 ? clearInterval(timerId) : ""
+            characterLeft += gravity;
+            character.style.top = characterLeft + "px"
+            character.style.left = ChLeft + "px"
+            if (characterLeft > 355)
+            {
+                characterLeft -= gravity;
+            }
+            
         }, 20)
     }
 
-    const Jump = () => controlBlock < 910 ? controlBlock += 40 : controlBlock -= 2
-
-    function randomBlock()
+    function generateWall()
     {
-        let left =  1700;
-        let random = ((Math.random()*300)+ 50);
-        const block = document.createElement("div");
-        const hole = document.createElement("div");
-        block.classList.add("wall");
-        block.style.left = left + "px";
-        start.appendChild(block);
-        hole.classList.add("emptyBlock");
-        hole.style.left = left + "px";
-        hole.style.top = random + "px";
-        start.appendChild(hole);    
-        function move()
-        {
-            
-            left -= 5;
-            block.style.left = left + "px"
-            hole.style.left = left + "px"
-            
-            left == 380 ? ClearPanel(timer, block, hole) : []
-            console.log(random + 190)
-           
-            
-            
-        }
+        let left = 830
+        let random = ((Math.random() * 120) + 250)
+        const wall = DownPart(random);
+        const UpWall = upperPart(random, Game);
+        Game.appendChild(wall)
 
-        let timer = setInterval(move,20)
-        setTimeout(randomBlock, 3000)
+        function moveBlock()
+        {
+            left -= 5;
+            wall.style.left = left + "px"
+            UpWall.style.left = left + "px"
+            if (left < - 100)
+            {
+                clearInterval(timerId)
+                wall.classList.remove("wall")
+                UpWall.classList.remove("UpWall")
+            }
+            Collision(left, ChLeft, characterLeft, random, setEndGame, timerId, ChTimer, timeControl);
+        }
+        let timerId = setInterval(moveBlock, 20)
+        let timeControl =  setTimeout(generateWall, 3000)
+        
     }
 
-    function ClearPanel(timer, block,hole)
-        {
-        clearInterval(timer);
-        block.classList.remove("wall");
-        hole.classList.remove("emptyBlock");
+    function upperPart(random, Game)
+    {
+        const UpWall = document.createElement("div");
+        UpWall.classList.add("UpWall");
+        UpWall.style.top = random - 350 + "px";
+        Game.appendChild(UpWall);
+        return UpWall;
+    }
+
+    function DownPart(random)
+    {
+        const wall = document.createElement("div");
+        wall.classList.add("wall");
+        wall.style.top = random + "px";
+        return wall;
     }
     
-    const Joystick = (e) => e.keyCode === 32 ? Jump() : []
-    const StartGame = () => FallDown()
+    function Collision(left, ChLeft, characterLeft, random, setEndGame, timerId, ChTimer, timeControl)
+    {
+        if (left > -10 && left < 10 &&
+            ChLeft === 10 &&
+            (characterLeft < random - 180) ||
+            characterLeft === 0)
+        {
+            setEndGame(timerId, ChTimer, timeControl);
+        }
+    
+        if (left > -10 &&
+            left < 10 &&
+            ChLeft === 10 &&
+            (characterLeft > random - 20))
+        {
+            setEndGame(timerId, ChTimer, timeControl);
+        }
+    }
 
-    randomBlock()
-    StartGame()
-    document.addEventListener("keyup", Joystick)
+    function setEndGame(timerId, ChTimer, timeControl)
+    {
+        clearInterval(timerId);
+        clearInterval(ChTimer);
+        clearTimeout(timeControl);
+    }
+    
+    const jump = () => characterLeft < 910 ? characterLeft -= 50 : characterLeft -= 2;
+    
+    function Joystick(e)
+    {
+        if (e.keyCode === 32)
+        {
+            jump()
+        }
+    }
+    
+    generateWall()
+    FallDown()
+    document.addEventListener("keyup",Joystick)
 })

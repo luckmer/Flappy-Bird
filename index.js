@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () =>{
         start.classList.add("Off")
     }
 
+
     function FallDown(){
         ChTimer = setInterval(function (){
             characterLeft += gravity;
@@ -29,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () =>{
         let left = 830
         let random = ((Math.random() * 120) + 250)
         const wall = DownPart(random);
-        const UpWall = upperPart(random, Game);
+        const UpWall = UpperPart(random, Game);
         Game.appendChild(wall)
 
         function moveBlock(){
@@ -47,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () =>{
         setTimeout(generateWall, 3000)
     }
 
-    function upperPart(random, Game){
+    function UpperPart(random, Game){
         const UpWall = document.createElement("div");
         UpWall.classList.add("UpWall");
         UpWall.style.top = random - 350 + "px";
